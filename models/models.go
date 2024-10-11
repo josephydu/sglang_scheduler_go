@@ -58,24 +58,58 @@ type GenerateRequest struct {
 }
 
 func (r GenerateRequest) ToMap() map[string]interface{} {
-	return map[string]interface{}{
-		"text": r.Text,
-		"sampling_params": map[string]interface{}{
-			"skip_special_tokens":           r.SamplingParams.SkipSpecialTokens,
-			"spaces_between_special_tokens": r.SamplingParams.SpacesBetweenSpecialTokens,
-			"max_new_tokens":                r.SamplingParams.MaxNewTokens,
-			"min_new_tokens":                r.SamplingParams.MinNewTokens,
-			"stop":                          r.SamplingParams.Stop,
-			"stop_token_ids":                r.SamplingParams.StopTokenIds,
-			"temperature":                   r.SamplingParams.Temperature,
-			"top_p":                         r.SamplingParams.TopP,
-			"top_k":                         r.SamplingParams.TopK,
-			"min_p":                         r.SamplingParams.MinP,
-			"frequency_penalty":             r.SamplingParams.FrequencyPenalty,
-			"presence_penalty":              r.SamplingParams.PresencePenalty,
-			"ignore_eos":                    r.SamplingParams.IgnoreEos,
-			"regex":                         r.SamplingParams.Regex,
-			"json_schema":                   r.SamplingParams.JsonSchema,
-		},
+	result := make(map[string]interface{})
+
+	samplingParams := make(map[string]interface{})
+	if r.SamplingParams.SkipSpecialTokens {
+		samplingParams["skip_special_tokens"] = r.SamplingParams.SkipSpecialTokens
 	}
+	if r.SamplingParams.SpacesBetweenSpecialTokens {
+		samplingParams["spaces_between_special_tokens"] = r.SamplingParams.SpacesBetweenSpecialTokens
+	}
+	if r.SamplingParams.MaxNewTokens != 0 {
+		samplingParams["max_new_tokens"] = r.SamplingParams.MaxNewTokens
+	}
+	if r.SamplingParams.MinNewTokens != 0 {
+		samplingParams["min_new_tokens"] = r.SamplingParams.MinNewTokens
+	}
+	if len(r.SamplingParams.Stop) > 0 {
+		samplingParams["stop"] = r.SamplingParams.Stop
+	}
+	if len(r.SamplingParams.StopTokenIds) > 0 {
+		samplingParams["stop_token_ids"] = r.SamplingParams.StopTokenIds
+	}
+	//if r.SamplingParams.Temperature != 0 {
+	//	samplingParams["temperature"] = r.SamplingParams.Temperature
+	//} // #NOTE Necessary...
+	if r.SamplingParams.TopP != 0 {
+		samplingParams["top_p"] = r.SamplingParams.TopP
+	}
+	if r.SamplingParams.TopK != 0 {
+		samplingParams["top_k"] = r.SamplingParams.TopK
+	}
+	if r.SamplingParams.MinP != 0 {
+		samplingParams["min_p"] = r.SamplingParams.MinP
+	}
+	if r.SamplingParams.FrequencyPenalty != 0 {
+		samplingParams["frequency_penalty"] = r.SamplingParams.FrequencyPenalty
+	}
+	if r.SamplingParams.PresencePenalty != 0 {
+		samplingParams["presence_penalty"] = r.SamplingParams.PresencePenalty
+	}
+	if r.SamplingParams.IgnoreEos {
+		samplingParams["ignore_eos"] = r.SamplingParams.IgnoreEos
+	}
+	if r.SamplingParams.Regex != nil {
+		samplingParams["regex"] = *r.SamplingParams.Regex
+	}
+	if r.SamplingParams.JsonSchema != nil {
+		samplingParams["json_schema"] = *r.SamplingParams.JsonSchema
+	}
+
+	if len(samplingParams) > 0 {
+		result["sampling_params"] = samplingParams
+	}
+
+	return result
 }
