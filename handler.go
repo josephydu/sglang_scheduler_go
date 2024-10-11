@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
 	"sglang_scheduler_go/models"
 )
@@ -66,7 +66,7 @@ func v1Completions(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Printf("%+v\n", req)
+	log.Printf("%+v\n", req)
 
 	if ctrl != nil {
 		baseUrl := "v1/completions"
