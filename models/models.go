@@ -60,6 +60,7 @@ type GenerateRequest struct {
 func (r GenerateRequest) ToMap() map[string]interface{} {
 	result := make(map[string]interface{})
 
+	result["text"] = r.Text // Text is necessary
 	samplingParams := make(map[string]interface{})
 	if r.SamplingParams.SkipSpecialTokens {
 		samplingParams["skip_special_tokens"] = r.SamplingParams.SkipSpecialTokens
