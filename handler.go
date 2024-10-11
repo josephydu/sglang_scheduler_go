@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
@@ -34,26 +35,27 @@ func generate(c *gin.Context) {
 	if ctrl != nil {
 		baseUrl := "generate"
 		c.Stream(func(w io.Writer) bool {
-			dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
-			for {
-				select {
-				case data, ok := <-dataChan:
-					if !ok {
-						return false
-					}
-					if len(data) > 0 {
-						_, err := w.Write(data)
-						if err != nil {
-							return false
+			for data := range ctrl.Dispatching([]models.Request{req}, baseUrl) {
+				if len(data) > 0 {
+					w.Write(data)
+					// Check the finish_reason in the meta_info
+					var response map[string]interface{}
+					if err := json.Unmarshal(data, &response); err == nil {
+						if metaInfo, ok := response["meta_info"].(map[string]interface{}); ok {
+							if finishReason, ok := metaInfo["finish_reason"].(map[string]interface{}); ok {
+								if finishType, ok := finishReason["type"].(string); ok {
+									if finishType == "length" || finishType == "stop" {
+										return false
+									}
+								}
+							}
 						}
-					} else {
-						return false
 					}
-				case <-c.Request.Context().Done():
+				} else {
 					return false
 				}
-
 			}
+			return true
 		})
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Controller is not initialized"})
