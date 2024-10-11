@@ -32,16 +32,28 @@ func generate(c *gin.Context) {
 
 	if ctrl != nil {
 		baseUrl := "generate"
-		dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
+		c.Stream(func(w io.Writer) bool {
+			dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
+			for {
+				select {
+				case data, ok := <-dataChan:
+					if !ok {
+						return false
+					}
+					if len(data) > 0 {
+						_, err := w.Write(data)
+						if err != nil {
+							return false
+						}
+					} else {
+						return false
+					}
+				case <-c.Request.Context().Done():
+					return false
+				}
 
-		var result []byte
-		for data := range dataChan {
-			if len(data) > 0 {
-				result = append(result, data...)
 			}
-		}
-
-		c.JSON(http.StatusOK, gin.H{"result": string(result)})
+		})
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Controller is not initialized"})
 	}
