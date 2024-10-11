@@ -33,38 +33,27 @@ func generate(c *gin.Context) {
 	log.Printf("[generate]%+v\n", req)
 	if ctrl != nil {
 		baseUrl := "generate"
-		//c.Stream(func(w io.Writer) bool {
-		//	dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
-		//	for {
-		//		select {
-		//		case data, ok := <-dataChan:
-		//			if !ok {
-		//				return false
-		//			}
-		//			if len(data) > 0 {
-		//				_, err := w.Write(data)
-		//				if err != nil {
-		//					return false
-		//				}
-		//			} else {
-		//				return false
-		//			}
-		//		case <-c.Request.Context().Done():
-		//			return false
-		//		}
-		//
-		//	}
-		//})
-
 		c.Stream(func(w io.Writer) bool {
-			for data := range ctrl.Dispatching([]models.Request{req}, baseUrl) {
-				if len(data) > 0 {
-					w.Write(data)
-				} else {
+			dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
+			for {
+				select {
+				case data, ok := <-dataChan:
+					if !ok {
+						return false
+					}
+					if len(data) > 0 {
+						_, err := w.Write(data)
+						if err != nil {
+							return false
+						}
+					} else {
+						return false
+					}
+				case <-c.Request.Context().Done():
 					return false
 				}
+
 			}
-			return true
 		})
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Controller is not initialized"})
