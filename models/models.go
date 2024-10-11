@@ -80,8 +80,9 @@ func (r GenerateRequest) ToMap() map[string]interface{} {
 		samplingParams["stop_token_ids"] = r.SamplingParams.StopTokenIds
 	}
 	//if r.SamplingParams.Temperature != 0 {
-	//	samplingParams["temperature"] = r.SamplingParams.Temperature
+	samplingParams["temperature"] = r.SamplingParams.Temperature
 	//} // #NOTE Necessary...
+
 	if r.SamplingParams.TopP != 0 {
 		samplingParams["top_p"] = r.SamplingParams.TopP
 	}
