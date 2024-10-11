@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io"
-	"log"
 	"net/http"
 	"sglang_scheduler_go/models"
 )
@@ -31,32 +29,19 @@ func generate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("[generate]%+v\n", req)
+
 	if ctrl != nil {
 		baseUrl := "generate"
-		c.Stream(func(w io.Writer) bool {
-			for data := range ctrl.Dispatching([]models.Request{req}, baseUrl) {
-				if len(data) > 0 {
-					w.Write(data)
-					// Check the finish_reason in the meta_info
-					var response map[string]interface{}
-					if err := json.Unmarshal(data, &response); err == nil {
-						if metaInfo, ok := response["meta_info"].(map[string]interface{}); ok {
-							if finishReason, ok := metaInfo["finish_reason"].(map[string]interface{}); ok {
-								if finishType, ok := finishReason["type"].(string); ok {
-									if finishType == "length" || finishType == "stop" {
-										return false
-									}
-								}
-							}
-						}
-					}
-				} else {
-					return false
-				}
+		dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
+
+		var result []byte
+		for data := range dataChan {
+			if len(data) > 0 {
+				result = append(result, data...)
 			}
-			return true
-		})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"result": string(result)})
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Controller is not initialized"})
 	}
@@ -68,7 +53,6 @@ func v1Completions(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	if ctrl != nil {
 		baseUrl := "v1/completions"
 		c.Stream(func(w io.Writer) bool {
