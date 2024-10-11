@@ -13,13 +13,13 @@ type Request interface {
 }
 
 type CompletionRequest struct {
-	Model       string  `json:"model"`
-	Prompt      string  `json:"prompt"`
-	Temperature float64 `json:"temperature"`
-	BestOf      float64 `json:"best_of"`
-	MaxTokens   int     `json:"max_tokens"`
-	Stream      bool    `json:"stream"`
-	IgnoreEos   bool    `json:"ignore_eos"`
+	Model       string  `json:"model,omitempty"`
+	Prompt      string  `json:"prompt,omitempty"`
+	Temperature float64 `json:"temperature,omitempty"`
+	BestOf      float64 `json:"best_of,omitempty"`
+	MaxTokens   int     `json:"max_tokens,omitempty"`
+	Stream      bool    `json:"stream,omitempty"`
+	IgnoreEos   bool    `json:"ignore_eos,omitempty"`
 }
 
 func (r CompletionRequest) ToMap() map[string]interface{} {
@@ -35,26 +35,26 @@ func (r CompletionRequest) ToMap() map[string]interface{} {
 }
 
 type SamplingParams struct {
-	SkipSpecialTokens          bool     `json:"skip_special_tokens"`
-	SpacesBetweenSpecialTokens bool     `json:"spaces_between_special_tokens"`
-	MaxNewTokens               int      `json:"max_new_tokens"`
-	MinNewTokens               int      `json:"min_new_tokens"`
-	Stop                       []string `json:"stop"`
-	StopTokenIds               []int    `json:"stop_token_ids"`
-	Temperature                float64  `json:"temperature"`
-	TopP                       float64  `json:"top_p"`
-	TopK                       int      `json:"top_k"`
-	MinP                       float64  `json:"min_p"`
-	FrequencyPenalty           float64  `json:"frequency_penalty"`
-	PresencePenalty            float64  `json:"presence_penalty"`
-	IgnoreEos                  bool     `json:"ignore_eos"`
-	Regex                      *string  `json:"regex"`
-	JsonSchema                 *string  `json:"json_schema"`
+	SkipSpecialTokens          bool     `json:"skip_special_tokens,omitempty"`
+	SpacesBetweenSpecialTokens bool     `json:"spaces_between_special_tokens,omitempty"`
+	MaxNewTokens               int      `json:"max_new_tokens,omitempty"`
+	MinNewTokens               int      `json:"min_new_tokens,omitempty"`
+	Stop                       []string `json:"stop,omitempty"`
+	StopTokenIds               []int    `json:"stop_token_ids,omitempty"`
+	Temperature                float64  `json:"temperature,omitempty"`
+	TopP                       float64  `json:"top_p,omitempty"`
+	TopK                       int      `json:"top_k,omitempty"`
+	MinP                       float64  `json:"min_p,omitempty"`
+	FrequencyPenalty           float64  `json:"frequency_penalty,omitempty"`
+	PresencePenalty            float64  `json:"presence_penalty,omitempty"`
+	IgnoreEos                  bool     `json:"ignore_eos,omitempty"`
+	Regex                      *string  `json:"regex,omitempty"`
+	JsonSchema                 *string  `json:"json_schema,omitempty"`
 }
 
 type GenerateRequest struct {
-	Text           string         `json:"text"`
-	SamplingParams SamplingParams `json:"sampling_params"`
+	Text           string         `json:"text,omitempty"`
+	SamplingParams SamplingParams `json:"sampling_params,omitempty"`
 }
 
 func (r GenerateRequest) ToMap() map[string]interface{} {
