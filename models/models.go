@@ -60,7 +60,7 @@ type GenerateRequest struct {
 func (r GenerateRequest) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"text": r.Text,
-		"samplingParams": map[string]interface{}{
+		"sampling_params": map[string]interface{}{
 			"skip_special_tokens":           r.SamplingParams.SkipSpecialTokens,
 			"spaces_between_special_tokens": r.SamplingParams.SpacesBetweenSpecialTokens,
 			"max_new_tokens":                r.SamplingParams.MaxNewTokens,
