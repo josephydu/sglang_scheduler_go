@@ -59,6 +59,42 @@ func generate(c *gin.Context) {
 	}
 }
 
+func v1Completions(c *gin.Context) {
+	var req models.CompletionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if ctrl != nil {
+		baseUrl := "v1/completions"
+		c.Stream(func(w io.Writer) bool {
+			dataChan := ctrl.Dispatching([]models.Request{req}, baseUrl)
+			for {
+				select {
+				case data, ok := <-dataChan:
+					if !ok {
+						return false
+					}
+					if len(data) > 0 {
+						_, err := w.Write(data)
+						if err != nil {
+							return false
+						}
+					} else {
+						return false
+					}
+				case <-c.Request.Context().Done():
+					return false
+				}
+
+			}
+		})
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Controller is not initialized"})
+	}
+}
+
 func getModelInfo(c *gin.Context) {
 	if ctrl != nil && len(ctrl.NodeList) > 0 {
 		c.JSON(http.StatusOK, gin.H{"model_path": ctrl.NodeList[0].ModelPath,

@@ -10,7 +10,7 @@ func setupRouter() *gin.Engine {
 	// 注册路由
 	r.POST("/register_nodes", registerNodes)
 	r.POST("/generate", generate)
-	//r.POST("/v1/completions", v1Completions)
+	r.POST("/v1/completions", v1Completions)
 	r.GET("/get_model_info", getModelInfo)
 
 	return r
