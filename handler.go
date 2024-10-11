@@ -30,7 +30,7 @@ func generate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	log.Printf("[generate]%+v\n", req)
 	if ctrl != nil {
 		baseUrl := "generate"
 		c.Stream(func(w io.Writer) bool {
@@ -66,7 +66,6 @@ func v1Completions(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("%+v\n", req)
 
 	if ctrl != nil {
 		baseUrl := "v1/completions"
