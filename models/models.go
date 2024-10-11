@@ -54,7 +54,7 @@ type SamplingParams struct {
 
 type GenerateRequest struct {
 	Text           string         `json:"text"`
-	SamplingParams SamplingParams `json:"samplingParams"`
+	SamplingParams SamplingParams `json:"sampling_params"`
 }
 
 func (r GenerateRequest) ToMap() map[string]interface{} {
